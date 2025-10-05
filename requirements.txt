@@ -7,3 +7,6 @@ seaborn==0.12.2
 plotly==5.15.0
 joblib==1.3.2
 gunicorn==21.2.0
+requests==2.31.0
+d3-celestial==0.7.26  # Si usas la librería Python, de lo contrario solo frontend
+flask-cors==
