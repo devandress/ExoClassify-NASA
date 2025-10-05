@@ -1,0 +1,298 @@
+/* NASA-inspired color palette */
+:root {
+  --nasa-blue-dark: #142850;
+  --nasa-blue: #27496d;
+  --nasa-blue-light: #009ffd;
+  --nasa-red: #e63946;
+  --nasa-white: #f8f9fa;
+  --nasa-gray: #e5e5e5;
+  --nasa-black: #1b1b1b;
+}
+
+body {
+  background: linear-gradient(135deg, var(--nasa-blue-dark) 60%, var(--nasa-black) 100%);
+  color: var(--nasa-white);
+  font-family: 'Montserrat', 'Roboto', Arial, sans-serif;
+}
+
+header {
+  background: var(--nasa-blue);
+  color: var(--nasa-white);
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(20, 40, 80, 0.15);
+}
+
+header img {
+  filter: none; /* Elimina cualquier filtro que cambie el color */
+  height: 48px;
+  margin-right: 1rem;
+}
+
+nav a {
+  color: var(--nasa-white);
+  background: var(--nasa-red);
+  padding: 0.5em 1em;
+  margin: 0 0.5em;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+nav a:hover {
+  background: var(--nasa-blue-dark);
+}
+
+main {
+  max-width: 900px;
+  margin: 2em auto;
+  background: rgba(217, 227, 234, 0.07);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(20, 40, 80, 0.18);
+  padding: 2em;
+}
+
+.card, .panel {
+  background: var(--nasa-gray);
+  color: var(--nasa-black); /* Asegura texto oscuro sobre fondo claro */
+}
+
+.card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(39, 73, 109, 0.12);
+  padding: 1.5em;
+  margin: 1.5em 0;
+}
+
+input, select, textarea {
+  background: var(--nasa-white);
+  color: var(--nasa-black);
+  border: 1px solid var(--nasa-blue);
+  border-radius: 4px;
+  padding: 0.5em;
+  font-size: 1em;
+}
+
+input[type="number"], input[type="text"], select, textarea {
+  background: var(--nasa-gray);
+  color: var(--nasa-black);
+  border: 1px solid var(--nasa-blue);
+  border-radius: 4px;
+  padding: 0.5em;
+  font-size: 1em;
+}
+
+input[type="number"]:focus, input[type="text"]:focus, select:focus, textarea:focus {
+  background: var(--nasa-white);
+  color: var(--nasa-black);
+  outline: 2px solid var(--nasa-blue-light);
+}
+
+h1, h2, h3 {
+  color: var(--nasa-red);
+  margin-top: 0.5em;
+  font-family: 'Montserrat', 'Roboto', Arial, sans-serif;
+}
+
+button, input[type="submit"] {
+  background: var(--nasa-red);
+  color: var(--nasa-white);
+  border: none;
+  padding: 0.8em 1.5em;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(230, 57, 70, 0.15);
+  transition: background 0.2s;
+}
+
+button:hover, input[type="submit"]:hover {
+  background: var(--nasa-blue);
+}
+
+footer {
+  background: var(--nasa-blue-dark);
+  color: var(--nasa-white);
+  text-align: center;
+  padding: 1em 0;
+  border-top: 2px solid var(--nasa-blue-light);
+  margin-top: 2em;
+}
+
+/* Additional styles for new pages */
+
+/* Risk indicators */
+.risk-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+/* Form enhancements */
+.form-control, .form-select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 255, 0, 0.3);
+    color: white;
+}
+
+.form-control:focus, .form-select:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--neon-green);
+    box-shadow: 0 0 0 0.2rem rgba(0, 255, 0, 0.25);
+    color: white;
+}
+
+/* Probability bars */
+.progress {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.progress-bar {
+    transition: width 0.5s ease-in-out;
+}
+
+/* Badge enhancements */
+.badge {
+    font-size: 0.7em;
+}
+
+/* List group items */
+.list-group-item {
+    background: transparent;
+    border: 1px solid rgba(0, 255, 0, 0.2);
+    color: white;
+}
+
+/* Table enhancements */
+.table-dark {
+    --bs-table-bg: transparent;
+    --bs-table-border-color: rgba(0, 255, 0, 0.2);
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 10px;
+    }
+    
+    .space-card {
+        margin-bottom: 1rem;
+    }
+    
+    .btn-group .btn {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
+    }
+}
+
+/* Loading animations */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.floating {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--space-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--neon-green);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #00cc00;
+}
+
+.text-primary, .navbar-brand {
+  color: var(--nasa-blue) !important;
+}
+
+.btn-space, .badge-confirmed {
+  background: var(--nasa-blue);
+  color: var(--nasa-white);
+}
+
+.badge-candidate {
+  background: var(--nasa-red);
+  color: var(--nasa-white);
+}
+
+.badge-false-positive {
+  background: var(--nasa-gray);
+  color: var(--nasa-black);
+}
+
+.navbar, .navbar-brand {
+  background: var(--nasa-blue-dark);
+  color: var(--nasa-white) !important;
+}
+
+.space-card {
+  background: var(--nasa-gray);
+  color: var(--nasa-black);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(20, 40, 80, 0.10);
+  padding: 1.5em;
+  min-height: 220px;
+  margin-bottom: 1em;
+}
+
+.btn-space {
+  background: var(--nasa-blue-light);
+  color: var(--nasa-white);
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-space:hover {
+  background: var(--nasa-blue);
+}
+
+.text-primary, .navbar-brand, .fa-rocket {
+  color: var(--nasa-blue-light) !important;
+}
+
+.text-success, .fa-check-circle, .fa-globe-americas {
+  color: var(--nasa-blue-light) !important;
+}
+
+.text-warning, .fa-search {
+  color: var(--nasa-blue) !important;
+}
+
+.text-danger, .fa-times-circle {
+  color: var(--nasa-blue-dark) !important;
+}
+
+.card-header {
+  background: var(--nasa-blue);
+  color: var(--nasa-white);
+  border-radius: 8px 8px 0 0;
+}
+
+.live-metric {
+  font-size: 2.2em;
+  font-weight: bold;
+  color: var(--nasa-blue-dark);
+}
+
+a.nav-link.active, a.nav-link:hover {
+  color: var(--nasa-blue-light) !important;
+  background: var(--nasa-gray);
+  border-radius: 4px;
+}

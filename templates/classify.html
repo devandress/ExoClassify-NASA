@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Classification - ExoClassify NASA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand text-light" href="/">
+            <i class="fas fa-rocket me-2"></i>ExoClassify NASA
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link text-light" href="/">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link text-light" href="/classify">ML Classification</a></li>
+                <li class="nav-item"><a class="nav-link text-light" href="/validate">NEOSSat Validation</a></li>
+                <li class="nav-item"><a class="nav-link text-light" href="/characterize">Physical Characterization</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-lg-6">
+                <!-- Main Classification Form -->
+                <div class="space-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-brain me-2"></i>Machine Learning Classification</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="classify-form">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Orbital Period (days)</label>
+                                        <input type="number" class="form-control" name="koi_period" step="0.1" value="45.2" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Planet Radius (Earth radii)</label>
+                                        <input type="number" class="form-control" name="koi_prad" step="0.1" value="2.1" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Equilibrium Temp (K)</label>
+                                        <input type="number" class="form-control" name="koi_teq" value="350" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Transit Duration (hours)</label>
+                                        <input type="number" class="form-control" name="koi_duration" step="0.1" value="6.2" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Transit Depth (ppm)</label>
+                                        <input type="number" class="form-control" name="koi_depth" value="890" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Signal-to-Noise Ratio</label>
+                                        <input type="number" class="form-control" name="koi_model_snr" step="0.1" value="9.3" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Impact Parameter</label>
+                                        <input type="number" class="form-control" name="koi_impact" step="0.1" min="0" max="1" value="0.5" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Transit Epoch</label>
+                                        <input type="number" class="form-control" name="koi_time0bk" step="0.1" value="160.1" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-space w-100">
+                                <i class="fas fa-cogs me-2"></i>Classify Exoplanet
+                            </button>
+                        </form>
+                        <div id="classify-preview" class="mt-3"></div>
+                    </div>
+                </div>
+
+                <!-- File Upload -->
+                <div class="space-card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-file-csv me-2"></i>Batch Classification</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Upload CSV File</label>
+                            <input type="file" class="form-control" id="csv-upload" accept=".csv">
+                            <div class="form-text">Upload a CSV file with exoplanet data for batch classification</div>
+                        </div>
+                        <div id="file-classify-result"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <!-- Results Panel -->
+                <div class="space-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Classification Results</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="classify-result" class="text-center">
+                            <div class="d-flex flex-column align-items-center py-3">
+                                <span style="font-size: 2.5rem; color: var(--bs-primary); margin-bottom: 10px;">
+                                    <i class="fas fa-microscope"></i>
+                                </span>
+                                <div class="mt-2">
+                                    <p class="mb-2">Submit exoplanet data to see ML classification results</p>
+                                    <small class="text-muted">The model will predict: Confirmed Exoplanet, Candidate, or False Positive</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="model-report" class="mt-4">
+                            <!-- El JS llenará este div con el reporte del modelo -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Model Information -->
+                <div class="space-card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>About the Model</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>Random Forest Classifier</h6>
+                        <p class="small text-muted">
+                            This model was trained on NASA's Kepler, K2, and TESS exoplanet datasets 
+                            using features like orbital period, planetary radius, transit depth, 
+                            and signal-to-noise ratio.
+                        </p>
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <small class="text-muted">Accuracy</small>
+                                <div class="fw-bold text-success">~92%</div>
+                            </div>
+                            <div class="col-4">
+                                <small class="text-muted">Features</small>
+                                <div class="fw-bold text-info">20+</div>
+                            </div>
+                            <div class="col-4">
+                                <small class="text-muted">Training Data</small>
+                                <div class="fw-bold text-warning">10K+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-info mt-3">
+            <strong>About Model Reliability:</strong>
+            <p class="mb-0 small">
+                The ML model was trained on real exoplanet data. The training report below shows its accuracy for each class. 
+                "Precision" is the fraction of correct predictions, "Recall" is the fraction of actual cases detected, and "F1-score" combines both.
+                Results may vary for new data, especially for "Candidate" class.
+            </p>
+        </div>
+    </div>
+
+    <footer class="bg-primary text-light text-center py-3 mt-5">
+        <div class="container">
+            <span>ExoClassify NASA &copy; 2025</span>
+            &nbsp;|&nbsp;
+            <a href="https://instagram.com/" target="_blank" class="text-light text-decoration-underline">
+                <i class="fab fa-instagram me-1"></i>Instagram
+            </a>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

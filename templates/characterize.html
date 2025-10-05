@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exoplanet Physical Characterization - ExoClassify NASA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand text-light" href="/">
+            <i class="fas fa-rocket me-2"></i>ExoClassify NASA
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link text-light" href="/">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link text-light" href="/classify">ML Classification</a></li>
+                <li class="nav-item"><a class="nav-link text-light" href="/validate">NEOSSat Validation</a></li>
+                <li class="nav-item"><a class="nav-link text-light" href="/characterize">Physical Characterization</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="space-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-globe me-2"></i>Exoplanet Physical Characterization</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="characterize-form">
+                            <div class="mb-3">
+                                <label class="form-label">Planet Radius (Earth radii)</label>
+                                <input type="number" class="form-control" name="radius" step="0.1" value="1.17" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Planet Mass (Earth masses)</label>
+                                <input type="number" class="form-control" name="planet_mass" step="0.1" value="1.0" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Orbital Period (days)</label>
+                                <input type="number" class="form-control" name="period" step="0.01" value="365.25" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Stellar Temperature (K)</label>
+                                <input type="number" class="form-control" name="stellar_temp" value="5772" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Stellar Radius (Solar radii)</label>
+                                <input type="number" class="form-control" name="stellar_radius" step="0.01" value="1.0" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Stellar Mass (Solar masses)</label>
+                                <input type="number" class="form-control" name="stellar_mass" step="0.01" value="1.0" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Insolation (S/S<sub>Earth</sub>)</label>
+                                <input type="number" class="form-control" name="koi_insol" step="0.01" value="1.0" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Eccentricity</label>
+                                <input type="number" class="form-control" name="eccentricity" step="0.01" value="0.0" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Albedo</label>
+                                <input type="number" class="form-control" name="albedo" step="0.01" value="0.3" required>
+                            </div>
+                            <button type="submit" class="btn btn-space w-100">
+                                <i class="fas fa-calculator me-2"></i>Calculate Physical Properties
+                            </button>
+                        </form>
+                        <div id="characterize-preview" class="mt-3"></div>
+                    </div>
+                </div>
+
+                <!-- Exoplanet Info -->
+                <div class="space-card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>About Exoplanet Characterization</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="small text-muted">
+                            Enter the physical and orbital parameters of your exoplanet candidate. The system will calculate key physical properties such as equilibrium temperature, planet type, habitable zone status, transit probability, surface gravity, escape velocity, and a habitability score.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <!-- Results -->
+                <div class="space-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Physical Analysis Results</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="characterize-result" class="text-center">
+                            <div class="d-flex flex-column align-items-center py-3">
+                                <!-- Planet icon changes by type, no padding or background -->
+                                <!-- Example: Rocky planet (Earth), Transition (circle-half-stroke), Gaseous (Jupiter) -->
+                                <span id="planet-icon" class="mb-3" style="font-size: 3rem; color: var(--bs-primary);">
+                                    <i class="fas fa-earth-americas"></i>
+                                </span>
+                                <div class="card bg-light text-dark w-100 mb-2" style="max-width: 400px;">
+                                    <div class="card-body p-3">
+                                        <ul class="list-group list-group-flush mb-2">
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <strong>Equilibrium Temperature:</strong>
+                                                <span style="color: #0d6efd;">254.6 K</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <strong>Planet Type:</strong>
+                                                <span style="color: #0d6efd;">Rocky</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <strong>Habitable Zone:</strong>
+                                                <span style="color: #0d6efd;">Conservative</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <strong>Transit Probability:</strong>
+                                                <span style="color: #0d6efd;">0.47%</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <strong>Surface Gravity:</strong>
+                                                <span style="color: #0d6efd;">7.16 m/s²</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <strong>Escape Velocity:</strong>
+                                                <span style="color: #0d6efd;">10.34 km/s</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <strong>Habitability Score:</strong>
+                                                <span style="color: #0d6efd;">100.0%</span>
+                                            </li>
+                                        </ul>
+                                        <small class="text-muted">These metrics are estimated from the input parameters. The habitability score is a simple indicator and not a guarantee of actual habitability.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Explanation Cards -->
+                <div class="row mt-3">
+                    <div class="col-12 mb-2">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <strong>Equilibrium Temperature:</strong>
+                                <p class="mb-0 small">The temperature a planet would have if it were a perfect blackbody, only heated by its star and not by internal sources or atmosphere.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-2">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <strong>Planet Type:</strong>
+                                <p class="mb-0 small">Classification based on radius: "Rocky" planets are similar to Earth, while larger planets may be gaseous or transitional.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-2">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <strong>Habitable Zone:</strong>
+                                <p class="mb-0 small">Region around a star where conditions may allow liquid water to exist on a planet's surface. "Conservative" means stricter limits, "Optimistic" is broader.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-2">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <strong>Transit Probability:</strong>
+                                <p class="mb-0 small">Chance that the planet passes in front of its star from our viewpoint, allowing detection by transit methods.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-2">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <strong>Surface Gravity:</strong>
+                                <p class="mb-0 small">The gravitational acceleration at the planet's surface, affecting atmosphere and habitability.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-2">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <strong>Escape Velocity:</strong>
+                                <p class="mb-0 small">Minimum speed needed for an object to leave the planet's gravitational field, important for atmosphere retention.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-2">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <strong>Habitability Score:</strong>
+                                <p class="mb-0 small">A simple indicator based on physical and orbital properties, not a guarantee of actual habitability.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Calculation Explanation -->
+                <div class="card bg-light mt-3">
+                    <div class="card-body">
+                        <strong>How are these metrics calculated?</strong>
+                        <ul class="small mb-0">
+                            <li><b>Equilibrium Temperature:</b> Calculated using stellar temperature, radius, distance, and albedo: <code>Teq = Tstar * sqrt(Rstar / (2 * a)) * (1 - albedo)<sup>0.25</sup></code></li>
+                            <li><b>Planet Type:</b> Based on planet radius: rocky (&lt;1.6 Earth radii), transition (1.6–2.5), gaseous (&gt;2.5).</li>
+                            <li><b>Habitable Zone:</b> Determined by insolation (stellar flux) compared to Earth.</li>
+                            <li><b>Transit Probability:</b> Ratio of stellar radius to orbital distance.</li>
+                            <li><b>Surface Gravity:</b> <code>g = g<sub>Earth</sub> * (M / R²)</code> where M and R are planet mass and radius.</li>
+                            <li><b>Escape Velocity:</b> <code>v = v<sub>Earth</sub> * sqrt(M / R)</code></li>
+                            <li><b>Habitability Score:</b> Weighted sum of favorable properties (radius, insolation, eccentricity, temperature).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-primary text-light text-center py-3 mt-5">
+        <div class="container">
+            <span>ExoClassify NASA &copy; 2025</span>
+            &nbsp;|&nbsp;
+            <a href="https://instagram.com/" target="_blank" class="text-light text-decoration-underline">
+                <i class="fab fa-instagram me-1"></i>Instagram
+            </a>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script>
+        // Cambia el ícono del planeta según el tipo (solo para ejemplo estático)
+        document.addEventListener('DOMContentLoaded', function() {
+            const type = document.getElementById('planet-type-text')?.textContent?.toLowerCase();
+            const iconSpan = document.getElementById('planet-icon');
+            if (iconSpan) {
+                if (type === 'rocky') {
+                    iconSpan.innerHTML = '<i class="fas fa-earth-americas"></i>';
+                } else if (type === 'transition') {
+                    iconSpan.innerHTML = '<i class="fas fa-circle-half-stroke"></i>';
+                } else if (type === 'gaseous') {
+                    iconSpan.innerHTML = '<i class="fas fa-jupiter"></i>';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
