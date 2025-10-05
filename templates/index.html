@@ -163,5 +163,66 @@
     <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
     <script src="{{ url_for('static', filename='js/starmap.js') }}"></script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+    <!-- Celestial Map Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializa el mapa celestial
+        Celestial.display({
+            width: 900,
+            projection: "aitoff",
+            datapath: "",
+            container: "celestial-map",
+            stars: false,
+            dsos: false,
+            constellations: {
+                names: true,
+                lines: true,
+                bounds: false
+            },
+            planets: { show: false },
+            interactive: true
+        });
+
+        // Carga los exoplanetas desde tu API
+        fetch('/api/exoplanets')
+            .then(res => res.json())
+            .then(exoplanets => {
+                const exoFeatures = {
+                    type: "FeatureCollection",
+                    features: exoplanets.map(exo => ({
+                        type: "Feature",
+                        id: exo.name,
+                        properties: {
+                            name: exo.name,
+                            classification: exo.classification
+                        },
+                        geometry: {
+                            type: "Point",
+                            coordinates: [exo.ra, exo.dec]
+                        }
+                    }))
+                };
+                Celestial.add({
+                    type: "exoplanets",
+                    callback: function() {
+                        Celestial.plot({
+                            type: "point",
+                            data: exoFeatures,
+                            style: function(d) {
+                                if (d.properties.classification === "Confirmed Exoplanet") return "#198754";
+                                if (d.properties.classification === "Candidate") return "#0dcaf0";
+                                return "#dc3545";
+                            },
+                            size: 6,
+                            tooltip: function(d) {
+                                return `<strong>${d.properties.name}</strong><br>${d.properties.classification}`;
+                            }
+                        });
+                    }
+                });
+            });
+    });
+    </script>
 </body>
 </html>

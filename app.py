@@ -308,7 +308,7 @@ def characterize_physical(data):
 @app.route('/api/exoplanets')
 def api_exoplanets():
     # Carga desde tu CSV o base de datos
-    df = pd.read_csv('/home/andy/exoclassify-nasa/model/model/koi_table.csv')
+    df = pd.read_csv('/home/andy/exoclassify-nasa/model/model/koi_table.csv', on_bad_lines='skip')
     # Ajusta los nombres de columnas según tu archivo
     exoplanets = []
     for _, row in df.iterrows():
